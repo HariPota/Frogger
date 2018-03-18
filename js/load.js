@@ -10,13 +10,17 @@ var loadState = {
         game.load.image('carG1', '../img/carG1.png');
         game.load.image('carG2', '../img/carG2.png');
         game.load.image('log', '../img/log.png');
+        game.load.audio("Music", "../mp3/music.wav");
+        game.load.audio("lose", "../mp3/lose.mp3");
+        game.load.audio("win", "../mp3/win.mp3");
+
 
 
     },
 
     create: function () {
         game.physics.startSystem(Phaser.Physics.ARCADE);
-        game.state.start('play');
+        game.state.start('menu');
     }
 
 };

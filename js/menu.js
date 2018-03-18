@@ -10,5 +10,10 @@ var menuState = {
 
     startGame: function () {
         game.state.start('play');
+        this.music = this.add.audio("Music",1,true,true);
+
+        this.music.play("",0,1,true,true);
+        this.music.volume = 0.3;
+        this.music.loop = true;
     }
 };

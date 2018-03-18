@@ -8,7 +8,7 @@ var winState = {
         },
 
     restartGame: function () {
-        game.state.start('menu');
+        game.state.start('play');
     }
 
 };

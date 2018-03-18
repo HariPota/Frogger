@@ -1,6 +1,5 @@
 var playState = {
     rows: [],
-    baskets: [],
     tileSize: 32,
     leftPressed: false,
     rightPressed: false,
@@ -11,17 +10,12 @@ var playState = {
     onLog: true,
 
     create: function () {
-        this.baskets = [32,128,224,320];
         this.rows = [];
         rowNum = game.height/this.tileSize;
         for(var i = 0;i<rowNum;i++){
             this.rows.push(this.tileSize*i);
         };
         game.add.tileSprite(0,0,650,600,"bg");
-
-        //this.player.x = 0+this.tileSize/2;
-        //this.player = this.add.sprite(0+this.tileSize/2,this.rows[this.rows.length-1]+this.tileSize/2, "frog");
-
 
         // SAMOCHODY
         this.cars = game.add.group();
@@ -81,18 +75,12 @@ var playState = {
         this.player = this.add.sprite(600,600,"frog");
         this.player.position.setTo(this.game.width * 0.5, this.game.height * 1);
 
-        // this.player.x = 0+this.tileSize/2;
-        // this.player.y = this.rows[this.rows.length-1] + this.tileSize/2;
 
         this.player.anchor.setTo(0.5);
         game.physics.enable(this.player, Phaser.Physics.ARCADE);
         this.player.body.collideWorldBounds = true;
         this.cursors = game.input.keyboard.createCursorKeys();
     },
-
-    // shouldCollide: function () {
-    //   return this.player.body.velocity.x > 150 || this.player.body.velocity.y > 150;
-    // },
 
     checkCars: function(){
         var car = this.cars.getFirstDead();
@@ -145,6 +133,7 @@ var playState = {
     },
     collideCallback : function (ob1,ob2) {
         ob1.kill();
+        game.sound.play("lose");
         game.state.start('lose');
     },
 
@@ -152,13 +141,12 @@ var playState = {
         this.checkIfOnLog();
         this.checkCars();
         this.checkLogs();
-        // if(this.player.y < 2*this.tileSize+this.tileSize/2){
-        //     this.player.y = 2*this.tileSize+this.tileSize/2;
-        // }
+
 
         game.physics.arcade.collide(this.player, this.cars, this.collideCallback);
         if(this.player.y>this.rows[2]&&this.player.y<this.rows[7]&&!this.onLog){
             this.player.kill();
+            game.sound.play("lose");
             game.state.start('lose');
         }
 
@@ -202,6 +190,7 @@ var playState = {
         }
 
         if(this.player.y<2*this.tileSize+this.tileSize/2){
+            game.sound.play("win");
             game.state.start('win');
         }
     }
