@@ -1,15 +1,15 @@
 var playState = {
-
     rows: [],
     baskets: [],
-    tileSize: 40.5,
+    tileSize: 32,
     leftPressed: false,
     rightPressed: false,
     upPressed: false,
     downPressed: false,
     carSpeed: 70,
-    create: function () {
+    //colideCounter: 0,
 
+    create: function () {
         this.baskets = [32,128,224,320];
         this.rows = [];
         rowNum = game.height/this.tileSize;
@@ -33,8 +33,8 @@ var playState = {
 
         this.cars = game.add.group();
         this.cars.enableBody = true;
-        game.add.sprite(220,this.rows[this.rows.length- 3],"car2",0,this.cars);
-        game.add.sprite(120,this.rows[this.rows.length-5],"car1",0,this.cars);
+        game.add.sprite(220,this.rows[this.rows.length- 4],"car1",0,this.cars);
+        game.add.sprite(120,this.rows[this.rows.length-7],"car2",0,this.cars);
         for(var i = 0; i < this.cars.children.length; i++) {
             if((this.cars.children[i].y/32)%2 === 0 ){
                 this.cars.children[i].body.velocity.x = -this.carSpeed;
@@ -45,6 +45,7 @@ var playState = {
             this.cars.children[i].outOfBoundsKill = true;
         }
 
+        game.physics.enable(this.cars, Phaser.Physics.ARCADE);
 
 
         this.cursors = game.input.keyboard.createCursorKeys();
@@ -54,12 +55,36 @@ var playState = {
     //   return this.player.body.velocity.x > 150 || this.player.body.velocity.y > 150;
     // },
 
+    checkCars: function(){
+        var car = this.cars.getFirstDead();
+        if(!car){
+            return
+        }
+        var y = car.y
+        var width = car.width
+        if((y/32)%2 === 0 ){
+            car.reset(game.world.width, y);
+            car.body.velocity.x = -this.carSpeed;
+        } else {
+            car.reset(0-width, y);
+            car.body.velocity.x = this.carSpeed;
+        }
+        car.checkWorldBounds = true;
+        car.outOfBoundsKill = true;
+    },
+
+    collideCallback : function (ob1,ob2) {
+        ob1.kill();
+        game.state.start('lose');
+    },
 
     update: function () {
-
+        this.checkCars();
         // if(this.player.y < 2*this.tileSize+this.tileSize/2){
         //     this.player.y = 2*this.tileSize+this.tileSize/2;
         // }
+
+        game.physics.arcade.collide(this.player, this.cars, this.collideCallback);
 
         if(this.cursors.left.isDown && !this.leftPressed){
             this.leftPressed = true;
@@ -99,7 +124,7 @@ var playState = {
             this.downPressed = false;
         }
 
-        if(this.colideCounter >= 5){
+        if(this.colideCounter === 1){
             game.state.start('win');
         }
     }
